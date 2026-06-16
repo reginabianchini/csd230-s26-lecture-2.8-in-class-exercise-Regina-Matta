@@ -7,7 +7,11 @@ import csd230.s26.lab1.repositories.CartRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Books", description = "Operations related to Book Management")
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -19,7 +23,8 @@ public class BookController {
         this.bookRepository = bookRepository;
         this.cartRepository = cartRepository;
     }
-
+    @Operation(summary = "Get all books", description = "Returns the HTML view of the book list")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list")
     @GetMapping
     public String getAllBooks(Model model) {
         model.addAttribute("books", bookRepository.findAll());

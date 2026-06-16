@@ -19,20 +19,26 @@ public class WebSecurityConfig {
     public WebSecurityConfig(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        // 1. Allow public access to specific endpoints
+                        // Existing public endpoints
                         .requestMatchers("/h2-console/**", "/login", "/css/**", "/js/**").permitAll()
 
-                        // 2. Admin only endpoints (CRUD operations on books)
+                        // --- ADD THESE LINES FOR SWAGGER ---
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        // ------------------------------------
+                        // Admin only
                         .requestMatchers("/books/add", "/books/edit/**", "/books/delete/**").hasRole("ADMIN")
-
-                        // 3. All other requests (view books, cart) require login
+                        // All others
                         .anyRequest().authenticated()
                 )
+
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/books", true)
